@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+        integrity="sha384-8ev3n0f1ftTn78dyJRO2tKXqjrvm+qDBiFA5ku4/bo+tT6UlVq8cd5x/byLynbtZ" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <title>Document</title>
+    <style>
+
+
+    </style>
+</head>
+
+<body>
+
+
+    <header>
+        <div class="container">
+            <h2 class="header_text">📒 Tài Chính Cá Nhân K24-Rikkei</h2>
+            <h2 class="header_text">Tài khoản</h2>
+        </div>
+
+        <div class="log_out">
+            <button onclick="log_Out()" type="button">Đăng Xuất</button>
+        </div>
+        
+        <div class="comfi_logOut d-none" id="Comfi_logOut">
+            <button onclick="Comfi_logOut()" type="button">Đăng Xuất</button>
+        </div>
+    </header>
+
+    <main>
+
+        <div class="head_box">
+            <h1>🎯 Kiểm soát chi tiêu thông minh</h1>
+            <P>Theo dõi ngân sách và thu chi hằng tháng dễ dàng</P>
+        </div>
+
+        <h1>📊 Quản Lý Tài Chính Cá Nhân</h1>
+
+        <div class="month_select ">
+            <p>📅 Chọn tháng: </p>
+            <input type="month" name="date" id="input_date" placeholder="March">
+        </div>
+
+        <div class="month_select ">
+            <p>💰 Ngân sách tháng:</p>
+            <input type="number" name="value" id="input_value" placeholder="VD: 100000">
+            <button type="button" class="btn btn-primary">Lưu</button>
+        </div>
+
+        <div class="money">
+            <p>Số tiền còn lại: </p>
+            <h5><span>100000</span> VND</h5>
+        </div>
+
+
+        <div class="manager_month">
+            <p>💼 Quản lý danh mục (theo tháng)</p>
+            <div class="input_form">
+                <input type="text" name="name" id="input_name" placeholder="Tên danh mục"></input>
+                <input type="number" name="value" id="input_value" placeholder="Giới hạn(VD: 100000)"></input>
+                <button type="button" class="btn btn-success">Thêm danh mục</button>
+            </div>
+
+            <table class="table_vnd table">
+                <tbody>
+                    <tr>
+                        <td>Tiền phòng-giới hạn: 2,000,000 VND</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary">Sửa</button>
+                            <button type="button" class="btn btn-danger">xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tiền ăn-giới hạn: 2,000,000 VND</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary">Sửa</button>
+                            <button type="button" class="btn btn-danger">xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tiền xăng xe-giới hạn: 2,000,000 VND</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary">Sửa</button>
+                            <button type="button" class="btn btn-danger">xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tiền mua sắm-giới hạn: 2,000,000 VND</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary">Sửa</button>
+                            <button type="button" class="btn btn-danger">xóa</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
+        <div class="input_add">
+            <form class="form_input">
+                <input type="number" name="name" id="input_money" placeholder="số tiền"></input>
+                <select name="category" id="input_category">
+                    <option value="" disabled selected hidden>Chọn danh mục</option>
+                    <option value="1">Mục 1</option>
+                    <option value="2">Mục 2</option>
+                </select>
+                <input type="text" id="note" placeholder="Ghi chú">
+            </form>
+            <button type="button" class="btn btn-success">Thêm</button>
+        </div>
+
+        <div class="history">
+            <p class="m-3">Lịch sử giao dịch</p>
+            <form class="form_last">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm...">
+                </div>
+                <select name="sort" id="input_sort">
+                    <option value="" disabled selected hidden>sắp xếp theo giá</option>
+                    <option value="1">Tăng dần</option>
+                    <option value="2">Giảm Dần</option>
+                </select>
+            </form>
+
+
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Tiền xăng xe-giới hạn: 2,000,000 VND</td>
+                            <td>
+                                <button type="button" class="btn btn-danger">xóa</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Tiền xăng xe-giới hạn: 2,000,000 VND</td>
+                            <td>
+                                <button type="button" class="btn btn-danger">xóa</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Tiền xăng xe-giới hạn: 2,000,000 VND</td>
+                            <td>
+                                <button type="button" class="btn btn-danger">xóa</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+
+            <nav class="pagination" aria-label="...">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link">Previous</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+
+        <div class="result">
+            <p> Danh mục "tiền ăn " đã vượt giới hạn: 1,060,000 / 1,000,000 VND</p>
+        </div>
+
+        <div class="thongke">
+            <p>📆 Thống kê chi tiêu các tháng</p>
+            <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>Tháng</th>
+                    <th>Chỉ tiêu</th>
+                    <th>Ngân sách</th>
+                    <th>Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Tiền xăng xe - giới hạn: 2,000,000 VND</td>
+                    <td>1000</td>
+                    <td>2000</td>
+                    <td>
+                    <p id="correct">đạt</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              
+        </div>
+       
+
+
+
+
+    </main>
+
+
+
+
+
+
+
+    <footer>
+        <p>© 2025 Quản Lý Tài Chính Cá Nhân. by Gia Lạc!</p>
+    </footer>
+
+
+    <script src="../js/dashboard.js"></script>
+</body>
+
+</html>
