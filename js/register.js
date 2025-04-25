@@ -5,7 +5,7 @@ const usersData = {
     ]
   };
   
-  // Lưu dữ liệu mẫu nếu chưa có
+  // Lưu dữ liệu mẫu nếu chưa có gì 
   function saveToLocalStore() {
     if (!localStorage.getItem("UserSystems")) {
       localStorage.setItem("UserSystems", JSON.stringify(usersData));
@@ -18,7 +18,7 @@ const usersData = {
     return regex.test(email);
   }
   
-  // Hàm xử lý đăng ký
+  // Hàm xử lý đăng ký 
   function register() {
     const email = document.getElementById("input_Email").value.trim();
     const password = document.getElementById("input_Password").value.trim();
@@ -30,12 +30,12 @@ const usersData = {
   
     let isValid = true;
   
-    // Ẩn lỗi cũ
+    // Ẩn lỗi cũ trước khi kiểm tra mới
     emailError.classList.add("d-none");
     passError.classList.add("d-none");
     confirmError.classList.add("d-none");
   
-    // Kiểm tra dữ liệu
+    // Kiểm tra dữ liệu người dùng nhập vào đã đúng hay chưa
     if (!email) {
       emailError.textContent = "Email không được để trống";
       emailError.classList.remove("d-none");
@@ -46,7 +46,7 @@ const usersData = {
       isValid = false;
     }
   
-    if (!password) {
+    if (!password && passError.length<6) {
       passError.textContent = "Mật khẩu không được để trống";
       passError.classList.remove("d-none");
       isValid = false;
