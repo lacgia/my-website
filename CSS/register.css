@@ -73,3 +73,25 @@ img {
   position: absolute;
   bottom: 650px;
 }
+
+.form-group {
+ margin-bottom: 5px;
+ position: relative;
+}
+
+
+#Error_Email {
+ position: fixed;
+ bottom: 420px;
+}
+
+#Eror_pass {
+  position: fixed;
+  bottom: 350px;
+
+}
+
+#Eror_ComfiPass {
+  position: fixed;
+  bottom: 280px;
+}

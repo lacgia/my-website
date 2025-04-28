@@ -46,12 +46,17 @@ const usersData = {
       isValid = false;
     }
   
-    if (!password && passError.length<6) {
+    if (!password || passError.length<6) {
       passError.textContent = "Mật khẩu không được để trống";
       passError.classList.remove("d-none");
       isValid = false;
+    }else if (password.length < 6) {
+      passError.textContent = "Mật khẩu phải có ít nhất 6 ký tự";
+      passError.classList.remove("d-none");
+      isValid = false;
     }
-  
+
+    
     if (password && password !== confirmPassword) {
       confirmError.textContent = "Mật khẩu xác nhận không khớp";
       confirmError.classList.remove("d-none");
