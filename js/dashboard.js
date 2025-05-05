@@ -58,10 +58,10 @@ function close_logOut() {
 
 
 
-// // ========== Khai báo các biến cho phân trang giao dịch ==========
+// // ========== Khai báo các biến toàn cục có tái sử dụng ==========
 let overlay = document.getElementById("overlay");
 let currentPage = 1; // Trang hiện tại
-const itemsPerPage = 5; // Số giao dịch trên mỗi trang
+const itemsPerPage = 3; // Số giao dịch trên mỗi trang
 //-----------------------------------------------------------------------------------//
 
 
@@ -70,22 +70,16 @@ const itemsPerPage = 5; // Số giao dịch trên mỗi trang
 // ========== Hàm load dữ liệu ==========
 function loadData() {
     selectedMonth = document.getElementById("input_date").value;
-    if (!selectedMonth) return;
-
+    if (!selectedMonth) {
+        return;
+    }
     const allData = JSON.parse(localStorage.getItem("financeData")) || {};
     const data = allData[selectedMonth];
 
-    if (data) {
         budget = data.budget || 0;
         remainingMoney = data.remainingMoney || 0;
         categories = data.categories || [];
-        transactions = data.transactions || [];
-    } else {
-        budget = 0;
-        remainingMoney = 0;
-        categories = [];
-        transactions = [];
-    }
+        transactions = data.transactions || []; 
 
     document.getElementById("input_value").value = budget || "";
     document.getElementById("remainingMoney").innerText = remainingMoney.toLocaleString();
@@ -122,7 +116,7 @@ function changeMonth() {
 // ------------------------------------ lưu tháng đó và ngân sách tháng đó ----------------------//
 
 function save1() {
-    const moneyInput = parseFloat(document.getElementById("input_value").value);
+    const moneyInput = parseFloat(document.getElementById("input_value").value.replace(/[^0-9]/g, ""));
     const dateInput = document.getElementById("input_date").value;
 
     let valid = true;
@@ -173,39 +167,46 @@ function saveCategory() {
     const name = document.getElementById("input_name").value.trim();
     const limit = parseFloat(document.getElementById("input_value_category").value);
 
+    let errorNameCategory = document.getElementById("errorNameCategory");
+    let errorValueCategory = document.getElementById("errorValueCategory");
     let valid = true;
 
 
     if (!name) {
-        document.getElementById("errorNameCategory").classList.remove("d-none");
+        errorNameCategory.classList.remove("d-none");
         valid = false;
     } else {
-        document.getElementById("errorNameCategory").classList.add("d-none");
+        errorNameCategory.classList.add("d-none");
     }
 
     // Kiểm tra giới hạn danh mục
     if (isNaN(limit) || limit <= 0) {
-        document.getElementById("errorValueCategory").classList.remove("d-none");
+        errorValueCategory.classList.remove("d-none");
         valid = false;
     } else {
-        document.getElementById("errorValueCategory").classList.add("d-none");
+        errorValueCategory.classList.add("d-none");
     }
+
+    if(limit>remainingMoney){
+        errorValueCategory.classList.remove("d-none");
+        errorValueCategory.innerText = "không được lớn hơn ngân sách còn lại!";
+        valid = false;
+    }
+    
 
     if (!valid) {
         return;
     }
 
-    // Thêm danh mục
     categories.push({ name, limit, spent: 0 });
     renderCategories();
     saveData();
 
-    // Reset form
     document.getElementById("input_name").value = "";
     document.getElementById("input_value_category").value = "";
 }
 
-// hiển thị danh mục mới lưu
+// hiển thị danh mục category
 function renderCategories() {
     const table = document.getElementById("table_Category");
     table.innerHTML = "";
@@ -219,7 +220,8 @@ function renderCategories() {
                 </td>
                 <td class="text-center">
                     <button onclick="showModalCategory(${index})" class="btn btn-primary">Sửa</button>
-                    <button onclick="showModelDelete(${index}, 'category')" class="btn btn-danger">Xóa</button>
+                        <button onclick="showModelDelete(${index}, 'category')" class="btn btn-danger">Xóa</button>
+                    </td>
                 </td>
             </tr>
         `;
@@ -267,6 +269,7 @@ function addTransaction() {
         errorMoneyTransaction.classList.add("d-none");
     }
 
+    // Kiểm tra danh mục
     if (!categoryValue) {
         errorCategoryTransaction.classList.remove("d-none");
         valid = false;
@@ -274,29 +277,77 @@ function addTransaction() {
         errorCategoryTransaction.classList.add("d-none");
     }
 
-
     if (!valid) {
         return;
     }
 
-    // Thêm giao dịch
-    const category = categories[categoryValue];
-    remainingMoney -= amountInput;
-    category.spent += amountInput;
+    // Kiểm tra giới hạn danh mục
+    const categoryIndex = parseInt(categoryValue);
+    const category = categories[categoryIndex];
+    if (category.spent + amountInput > category.limit) {
+        // Hiển thị modal xác nhận nếu vượt giới hạn
+        showOverLimitModal(categoryIndex, amountInput, note);
+        return;
+    }
 
-    transactions.push({ amount: amountInput, category: category.name, note });
-    saveData(); // Lưu dữ liệu vào localStorage
-    renderTransactions(); // Hiển thị lại giao dịch
-    renderCategories(); // Cập nhật danh mục
+    // Thêm giao dịch nếu không vượt giới hạn
+    addTransactionToCategory(categoryIndex, amountInput, note);
+}
+
+
+function addTransactionToCategory(categoryIndex, amount, note="") {
+    const category = categories[categoryIndex];
+    remainingMoney -= amount;
+    category.spent += amount;
+
+    transactions.push({
+        amount: amount,
+        category: category.name,
+        note: note || "Không có ghi chú",
+    });
+
+    saveData(); 
+    renderTransactions(); 
+    renderCategories(); 
 
     // Cập nhật số tiền còn lại
     document.getElementById("remainingMoney").innerText = remainingMoney.toLocaleString();
 
-    // Reset form
+    
     document.getElementById("input_money").value = "";
     document.getElementById("input_ChoseCategory").value = "";
     document.getElementById("note").value = "";
 }
+
+
+// đóng mở madal giới hạn danh mục khi giao dịch
+const modal = document.getElementById("overLimitModal");
+
+function closeOverLimitModal() {
+   
+
+    modal.classList.add("d-none");
+    overlay.classList.add("d-none");
+}
+
+function showOverLimitModal(categoryIndex, amount) {
+
+    modal.classList.remove("d-none");
+    overlay.classList.remove("d-none");
+
+    document.getElementById("btnContinueOverLimit").onclick = function () {
+        addTransactionToCategory(categoryIndex, amount, note); 
+        closeOverLimitModal(); 
+    };
+
+    document.getElementById("btnCancelOverLimit").onclick = function () {
+        closeOverLimitModal(); 
+    };
+}
+
+
+
+
 
 //-----------------------------------------------------------------------------------------------------------------//
 
@@ -329,22 +380,28 @@ function ComfiModalCategory() {
     let checkNameEdit = document.getElementById("errorNameEditCategory");
     let checkValueEdit = document.getElementById("errorValueEditCategory");
 
-    let valid = true;
-
-  if(!newName){
-    checkNameEdit.classList.remove("d-none");
-    valid = false;
-  }else{
     checkNameEdit.classList.add("d-none");
-  }
+    checkValueEdit.classList.add("d-none");
 
-  if(!newLimit){
-    checkValueEdit.classList.remove("d-none");
-  }
+    let vailed = true;
 
-  if(!vailed){
-    return;
-  }
+    if (!newName) {
+        checkNameEdit.classList.remove("d-none");
+        vailed = false;
+    } else {
+        checkNameEdit.classList.add("d-none");
+    }
+
+    if (!newLimit) {
+        checkValueEdit.classList.remove("d-none");
+        vailed = false
+    } else {
+        checkValueEdit.classList.add("d-none");
+    }
+
+    if (!vailed) {
+        return;
+    }
 
     if (indexToEdit !== -1) {
         categories[indexToEdit].name = newName;
@@ -386,33 +443,62 @@ let indexToDelete = -1;
 let type = "";
 
 
-function showModelDelete(index, type) {
+function showModelDelete(index, deleteType) {
     indexToDelete = index;
-    type = type;
+    type = deleteType; // Gán loại xóa (transaction hoặc category)
     overlayDelete.classList.remove("d-none");
     deleteModal.classList.remove("d-none");
 }
 
 function confirmDeleteTransaction() {
-    console.log(type);
-
     if (indexToDelete !== -1) {
-        if (type == "transaction") {
-            console.log("lac");
+        if (type === "transaction") {
+            // Xóa giao dịch
+            const transaction = transactions[indexToDelete];
+            const category = categories.find(cat => cat.name === transaction.category);
+
+            remainingMoney += transaction.amount;
+            if (category) {
+                category.spent -= transaction.amount;
+            }
+
             transactions.splice(indexToDelete, 1);
-            localStorage.setItem("transaction", JSON.stringify(transactions));
+
             renderTransactions();
-        } else if (type == "category") {
-            console.log("huy");
+            renderCategories();
+            document.getElementById("remainingMoney").innerText = remainingMoney.toLocaleString();
+
+        } else if (type === "category") {
+            const categoryToDelete = categories[indexToDelete];
+            const hasTransactions = transactions.some(tran => tran.category === categoryToDelete.name);
+
+            if (hasTransactions) {
+                closeModalDelete();
+                showModalHasTranSaction();
+                return;
+            }
+
             categories.splice(indexToDelete, 1);
-            localStorage.setItem("categories", JSON.stringify(categories));
             renderCategories();
         }
+
+        saveData();
+
         closeModalDelete();
     }
 }
 
+function showModalHasTranSaction(){
+    const modal = document.getElementById("modalHasTransaction");
+    modal.classList.remove("d-none");
+    overlayDelete.classList.remove("d-none");
+}
 
+function closeModalHasTranSaction(){
+    const modal = document.getElementById("modalHasTransaction");
+    modal.classList.add("d-none");
+    overlayDelete.classList.add("d-none");
+}
 
 function closeModalDelete() {
     deleteModal.classList.add("d-none");
@@ -420,7 +506,6 @@ function closeModalDelete() {
     indexToDelete = -1;
     type = "";
 }
-
 //--------------------------------------------------------------------------------------------------------------//
 
 
@@ -428,11 +513,12 @@ function closeModalDelete() {
 
 
 
-
-
-
-
-
+function formatCurrencyInputDirectly(inputId) {
+    const inputElement = document.getElementById(inputId);
+    let value = inputElement.value.replace(/[^0-9]/g, "");
+    value = new Intl.NumberFormat("vi-VN").format(value);
+    inputElement.value = value;
+}
 
 
 
@@ -454,57 +540,79 @@ function closeModalDelete() {
 
 // ------------------------------ Phân trang cho phần lịch sử giao dịch --------------------------------------//
 
+let searchQuery = ""; 
+let sortOrder = ""; 
+
+
+
 function renderTransactions() {
     const table = document.getElementById("table_Transaction");
-    table.innerHTML = ""; // Làm mới bảng trước khi hiển thị
+    table.innerHTML = "";
 
-    if (transactions.length === 0) {
-        table.innerHTML = `<tr><td colspan="5" class="text-center">Không có giao dịch nào</td></tr>`;
-        renderPagination(); // Cập nhật nút phân trang (ẩn nếu không cần)
+    // Lọc giao dịch theo từ khóa tìm kiếm
+    let filteredTransactions = transactions.filter(tran =>
+        tran.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tran.note.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Sắp xếp giao dịch theo thứ tự
+    if (sortOrder === "asc") {
+        filteredTransactions.sort((a, b) => a.amount - b.amount); // Tăng dần
+    } else if (sortOrder === "desc") {
+        filteredTransactions.sort((a, b) => b.amount - a.amount); // Giảm dần
+    }
+
+    // Kiểm tra nếu không có giao dịch
+    if (filteredTransactions.length === 0) {
+        table.innerHTML = `<tr><td colspan="5" class="text-center">Không tìm thấy giao dịch nào</td></tr>`;
+        renderPagination(filteredTransactions); // Cập nhật nút phân trang
         return;
     }
 
-    const totalPages = Math.ceil(transactions.length / itemsPerPage);
+    // Tính toán số trang
+    const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
     if (currentPage > totalPages) currentPage = totalPages; // Nếu xóa giao dịch làm giảm số trang
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage, transactions.length);
-    const paginatedTransactions = transactions.slice(startIndex, endIndex);
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredTransactions.length);
+    const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
 
+    // Hiển thị các giao dịch trong trang hiện tại
     paginatedTransactions.forEach((tran, index) => {
         table.innerHTML += `
             <tr>
                 <td>${tran.category}</td>
                 <td>${tran.amount.toLocaleString()} VND</td>
-                <td>${tran.date}</td>
                 <td>${tran.note}</td>
-                <td>
-                    <button onclick="showModelDelete(${startIndex + index}, 'transaction')" class="btn btn-danger">Xóa</button>
+                               <td>
+                    <button onclick="showModelDelete(${index}, 'transaction')" class="btn btn-danger">Xóa</button>
                 </td>
             </tr>
         `;
     });
 
-    renderPagination();
+    // Cập nhật phân trang
+    renderPagination(filteredTransactions);
 }
 
 
 
-function renderPagination() {
+
+function renderPagination(filteredTransactions) {
     const paginationDiv = document.querySelector(".pagination ul");
     paginationDiv.innerHTML = "";
 
-    const totalPages = Math.ceil(transactions.length / itemsPerPage);
-    if (totalPages <= 1) return;
+    const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+    if (totalPages <= 1) return; // Không cần phân trang nếu chỉ có 1 trang
 
-    // Previous
+    // Nút "Previous"
     paginationDiv.innerHTML += `
         <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
             <button class="page-link" onclick="changePage(${currentPage - 1})">Previous</button>
         </li>
     `;
 
-    // Các trang
+    // Các nút số trang
     for (let i = 1; i <= totalPages; i++) {
         paginationDiv.innerHTML += `
             <li class="page-item ${i === currentPage ? 'active' : ''}">
@@ -513,12 +621,32 @@ function renderPagination() {
         `;
     }
 
-    // Next
+    // Nút "Next"
     paginationDiv.innerHTML += `
         <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
             <button class="page-link" onclick="changePage(${currentPage + 1})">Next</button>
         </li>
     `;
+}
+
+
+// hàm sắp xếp giao dịch lấy dữ liệu
+function sortTransactions(order) {
+    if (order === "asc") {
+        transactions.sort((a, b) => a.amount - b.amount);
+    } else if (order === "desc") {
+        transactions.sort((a, b) => b.amount - a.amount);
+    }
+
+    renderTransactions();
+}
+
+
+// Hàm tìm kiếm giao dịch
+function searchTransactions() {
+    searchQuery = document.getElementById("searchInput").value.trim();
+    currentPage = 1; 
+    renderTransactions();
 }
 
 
@@ -528,6 +656,5 @@ function changePage(page) {
 }
 
 //-----------------------------------------------------------------------------------------------------------------//
-
 
 

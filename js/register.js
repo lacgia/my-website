@@ -1,11 +1,10 @@
 const usersData = {
     users: [
-      { id: 1, username: "1", password: "1" },
-      { id: 2, username: "user2", password: "password456" }
+      { id: 1, username: "lac", password: "123456" }
     ]
   };
   
-  // Lưu dữ liệu mẫu nếu chưa có gì 
+  // lưu tài khoảng mẫu
   function saveToLocalStore() {
     if (!localStorage.getItem("UserSystems")) {
       localStorage.setItem("UserSystems", JSON.stringify(usersData));

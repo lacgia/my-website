@@ -63,6 +63,7 @@ main {
     gap: 15px;
     font-size: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .month_select input {
@@ -105,13 +106,22 @@ h5 {
     font-size: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 10px;
+   
+   
 }
+.error_form{
 
+    display: flex;
+    gap: 20px;
+    padding-right: 110px;
+}
 .input_form {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    padding: 0px;
+   
 }
 
 .input_form input {
@@ -139,7 +149,7 @@ table {
     font-size: 17px;
 }
 
-.manager_month p {
+.managerMonthContent {
     padding-right: 300px;
 }
 
@@ -156,6 +166,7 @@ table {
     gap: 20px;
     font-size: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 input {
@@ -364,6 +375,9 @@ td {
     
 }
 
+.log_out {
+    padding-right: 100px;
+}
 
 /* kiểm tra input người dùng nhập vào */
 .error_Date {
@@ -371,7 +385,7 @@ td {
     font-size: 15px;
     margin-top: 4px;
     position:absolute;
-    bottom: 354px;
+    bottom: 12px;
 }
 
 .error_Money {
@@ -379,25 +393,29 @@ td {
     color: red;
     font-size: 15px;
     margin-top: 4px;
-    bottom: 220px;
+    bottom:10px;
 }
 
-.error_NameCategory {
-    position: absolute;
+
+
+.errorNameCategory {
+    
     color: red;
-    font-size: 15px;
-    margin-top: 4px;
-    top: 810px;
-    right: 500px;
+    font-size: 15px;   
+    left: 400px;
+    bottom: 1050px;
+
+  
 }
 
-.error_ValueCategory {
-    position: absolute;
+.errorValueCategory {
+    
     color: red;
     font-size: 15px;
-    margin-top: 4px;
-    top: 810px;
-    right: 290px;
+   
+    bottom: 40px;
+    left: 270px;
+ 
 }
 
 
@@ -411,7 +429,8 @@ td {
   text-align: center;
   width: 300px;
   margin: 100px auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 
+  0 6px 6px rgba(0, 0, 0, 0.22);
 }
 
 .overlay {
@@ -485,8 +504,8 @@ td {
     position: absolute;
     color: red;
     font-size: 12px;
-    margin-top: 4px;
-    right: 670px;
+    left: 220px;
+    bottom: 5px;
     
 }
 
@@ -496,7 +515,7 @@ td {
 .showModalCategory{
     position: fixed;
     width: 360px;
-    height: 280px;
+    height: 300px;
     z-index: 900;
     color: white;
     top: 200px;
@@ -505,8 +524,9 @@ td {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 30px;
     border-radius: 7px;
+    
    
 }
 
@@ -516,7 +536,7 @@ td {
 }
 
 
-.showModalCategory p{
+.Edit_head{
     font-size: 24px;
 }
 
@@ -524,3 +544,119 @@ td {
     display: flex;
     gap: 120px;
 }
+
+main{
+    position: relative;
+}
+
+.errorNameEditCategory{
+    position: absolute;
+    color: red;
+    font-size: 15px;
+    margin-top: 4px;
+    top: 130px;
+}
+
+#errorValueEditCategory{
+    position: absolute;
+    color: red;
+    font-size: 15px;
+    top: 220px;
+}
+
+input {
+    padding: 10px; 
+    border: 1.5px solid #ccc;
+    border-radius: 8px; 
+    font-size: 14px;
+    outline: none;
+    background-color: #fff;
+    transition: all 0.3s ease; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+}
+
+input:hover {
+    border-color: #7c74f4; 
+    box-shadow: 0 4px 8px rgba(124, 116, 244, 0.2); 
+}
+
+input:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 8px rgba(78, 115, 223, 0.4);
+}
+
+
+.modal_ContinueOverLimit{
+    position: fixed;
+    width: 360px;
+    height: 280px;
+    z-index: 1000;
+    color: white;
+    top: 200px;
+    left: 550px;
+    text-align: center;
+    background-color: #4138c2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    border-radius: 7px;
+}
+
+.hasTransaction{
+    position: fixed;
+    width: 360px;
+    height: 280px;
+    z-index: 1000;
+    color: white;
+    top: 200px;
+    left: 550px;
+    text-align: center;
+    background-color: #4138c2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    border-radius: 7px;
+}
+
+
+
+
+@media (max-width: 768px) {
+  .manager_month{
+    width: 90%;
+    height: auto;
+  }
+
+ 
+
+  .input_add{
+    width: 90%;
+  }
+
+    .month_select{
+        width: 90%;
+    }
+    .history{
+        width: 90%;
+    }
+
+    .thongke{
+        width: 90%;
+    }
+    .money{
+        width: 90%;
+    }
+    .head_box{
+        width: 90%;
+    }
+   .result{
+    width:90%;
+   }
+
+}
+
+
