@@ -1,7 +1,6 @@
-const usersData = {
-   
-  };
+
   
+
   // lưu tài khoảng mẫu
   function saveToLocalStore() {
     if (!localStorage.getItem("UserSystems")) {
@@ -16,71 +15,74 @@ const usersData = {
   }
   
   // Hàm xử lý đăng ký 
-  function register() {
-    const email = document.getElementById("input_Email").value.trim();
-    const password = document.getElementById("input_Password").value.trim();
-    const confirmPassword = document.getElementById("confirm-Password").value.trim();
+   function register() {
+      const email = document.getElementById("input_Email").value.trim();
+      const password = document.getElementById("input_Password").value.trim();
+      const confirmPassword = document.getElementById("confirm-Password").value.trim();
   
-    const emailError = document.getElementById("Error_Email");
-    const passError = document.getElementById("Eror_pass");
-    const confirmError = document.getElementById("Eror_ComfiPass");
+      const emailError = document.getElementById("Error_Email");
+      const passError = document.getElementById("Eror_pass");
+      const confirmError = document.getElementById("Eror_ComfiPass");
   
-    let isValid = true;
+      let isValid = true;
   
-    // Ẩn lỗi cũ trước khi kiểm tra mới
-    emailError.classList.add("d-none");
-    passError.classList.add("d-none");
-    confirmError.classList.add("d-none");
+      emailError.classList.add("d-none");
+      passError.classList.add("d-none");
+      confirmError.classList.add("d-none");
   
-    // Kiểm tra dữ liệu người dùng nhập vào đã đúng hay chưa
-    if (!email) {
-      emailError.textContent = "Email không được để trống";
-      emailError.classList.remove("d-none");
-      isValid = false;
-    } else if (!isValidEmail(email)) {
-      emailError.textContent = "Email không hợp lệ";
-      emailError.classList.remove("d-none");
-      isValid = false;
-    }
+      if (!email) {
+          emailError.textContent = "Email không được để trống";
+          emailError.classList.remove("d-none");
+          isValid = false;
+      } else if (!isValidEmail(email)) {
+          emailError.textContent = "Email không hợp lệ";
+          emailError.classList.remove("d-none");
+          isValid = false;
+      }
   
-    if (!password || passError.length<6) {
-      passError.textContent = "Mật khẩu không được để trống";
-      passError.classList.remove("d-none");
-      isValid = false;
-    }else if (password.length < 6) {
-      passError.textContent = "Mật khẩu phải có ít nhất 6 ký tự";
-      passError.classList.remove("d-none");
-      isValid = false;
-    }
-
-    
-    if (password && password !== confirmPassword) {
-      confirmError.textContent = "Mật khẩu xác nhận không khớp";
-      confirmError.classList.remove("d-none");
-      isValid = false;
-    }
+      if (!password) {
+          passError.textContent = "Mật khẩu không được để trống";
+          passError.classList.remove("d-none");
+          isValid = false;
+      } else if (password.length < 6) {
+          passError.textContent = "Mật khẩu phải có ít nhất 6 ký tự";
+          passError.classList.remove("d-none");
+          isValid = false;
+      }
   
-    if (!isValid) return;
+      if (password && password !== confirmPassword) {
+          confirmError.textContent = "Mật khẩu xác nhận không khớp";
+          confirmError.classList.remove("d-none");
+          isValid = false;
+      }
   
-    const data = JSON.parse(localStorage.getItem("UserSystems")) || { users: [] };
+      if (!isValid) return;
   
-    const userExists = data.users.some(user => user.username === email);
-    if (userExists) {
-      emailError.textContent = "Email đã tồn tại";
-      emailError.classList.remove("d-none");
-      return;
-    }
+      // Kiểm tra và xử lý dữ liệu trong localStorage
+      const rawData = localStorage.getItem("UserSystems");
+      let data = rawData ? JSON.parse(rawData) : { users: [] };
   
-    const newUser = {
-      id: Date.now(),
-      username: email,
-      password: password
-    };
+      if (!Array.isArray(data.users)) {
+          data.users = [];
+      }
   
-    data.users.push(newUser);
-    localStorage.setItem("UserSystems", JSON.stringify(data));
+      const userExists = data.users.some(user => user.username === email);
+      if (userExists) {
+          emailError.textContent = "Email đã tồn tại";
+          emailError.classList.remove("d-none");
+          return;
+      }
   
-    showSuccessPopup();
+      const newUser = {
+          id: Date.now(),
+          username: email,
+          password: password
+      };
+  
+      data.users.push(newUser);
+      localStorage.setItem("UserSystems", JSON.stringify(data));
+  
+      showSuccessPopup();
   }
   
   function showSuccessPopup() {
