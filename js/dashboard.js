@@ -204,6 +204,10 @@ function saveCategory() {
 
     document.getElementById("input_name").value = "";
     document.getElementById("input_value_category").value = "";
+
+
+    showSuccessMessage("Đã thêm danh mục thành công!");
+
 }
 
 // hiển thị danh mục category
@@ -317,6 +321,11 @@ function addTransactionToCategory(categoryIndex, amount, note="") {
     document.getElementById("input_money").value = "";
     document.getElementById("input_ChoseCategory").value = "";
     document.getElementById("note").value = "";
+
+
+
+    showSuccessMessage("Đã thêm giao dịch thành công!");
+
 }
 
 
@@ -330,7 +339,7 @@ function closeOverLimitModal() {
     overlay.classList.add("d-none");
 }
 
-function showOverLimitModal(categoryIndex, amount) {
+function showOverLimitModal(categoryIndex, amount, note) {
 
     modal.classList.remove("d-none");
     overlay.classList.remove("d-none");
@@ -397,6 +406,12 @@ function ComfiModalCategory() {
         vailed = false
     } else {
         checkValueEdit.classList.add("d-none");
+    }
+
+    if(newLimit > remainingMoney){
+        checkValueEdit.textContent="Không được lớn hơn số tiền còn lại";
+        checkValueEdit.classList.remove("d-none");
+        vailed = false;
     }
 
     if (!vailed) {
@@ -485,6 +500,8 @@ function confirmDeleteTransaction() {
         saveData();
 
         closeModalDelete();
+        showSuccessMessage(type === "transaction" ? "Đã xóa giao dịch thành công!" : "Đã xóa danh mục thành công!");
+
     }
 }
 
@@ -512,13 +529,12 @@ function closeModalDelete() {
 
 
 
-
-function formatCurrencyInputDirectly(inputId) {
-    const inputElement = document.getElementById(inputId);
+function formatCurrencyInputDirectly(inputElement) {
     let value = inputElement.value.replace(/[^0-9]/g, "");
     value = new Intl.NumberFormat("vi-VN").format(value);
     inputElement.value = value;
 }
+
 
 
 
@@ -656,5 +672,32 @@ function changePage(page) {
 }
 
 //-----------------------------------------------------------------------------------------------------------------//
+
+
+
+function showSuccessMessage(message = "Thêm thành công!") {
+    const msgBox = document.getElementById("successMessage");
+    const msgBoxStyle=document.querySelector(".alert-success-message");
+    msgBox.innerText = message;
+    msgBox.classList.remove("d-none");
+    msgBox.classList.add("show");
+
+    if(message == "Đã xóa giao dịch thành công!" || message == "Đã xóa danh mục thành công!"){
+        msgBoxStyle.style.backgroundColor = "red";
+        msgBoxStyle.style.color = "white";
+    }
+
+    if(message == "Đã thêm giao dịch thành công!" || message == "Đã thêm danh mục thành công!"){
+        msgBoxStyle.style.backgroundColor = "green";
+        msgBoxStyle.style.color = "white";
+    }
+
+    setTimeout(() => {
+        msgBox.classList.remove("show");
+        setTimeout(() => {
+            msgBox.classList.add("d-none");
+        }, 500);
+    }, 2000); 
+}
 
 

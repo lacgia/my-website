@@ -236,7 +236,7 @@ body {
     background-color: white;
     border-radius: 10px;
     width: 45%;
-    height: 70px;
+  height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -660,3 +660,22 @@ input:focus {
 }
 
 
+.alert-success-message {
+    position: fixed;
+    top: -100px; /* Ẩn khỏi màn hình */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4caf50;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    opacity: 0;
+}
+
+.alert-success-message.show {
+    top: 60px; 
+    opacity: 1;
+}

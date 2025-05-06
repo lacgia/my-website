@@ -1,7 +1,5 @@
 const usersData = {
-    users: [
-      { id: 1, username: "lac", password: "123456" }
-    ]
+   
   };
   
   // lưu tài khoảng mẫu
